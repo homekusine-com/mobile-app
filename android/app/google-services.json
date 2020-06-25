@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "718454508856",
+    "firebase_url": "https://homekusine.firebaseio.com",
+    "project_id": "homekusine",
+    "storage_bucket": "homekusine.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:718454508856:android:50048c7ed68021a5bb85cd",
+        "android_client_info": {
+          "package_name": "com.homekusine.homekusine"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "718454508856-o8cdqjdcq8pprkhjkg9qictdk7qtolsl.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.homekusine.homekusine",
+            "certificate_hash": "8a129862e6fd2aeffa20c8d579e862c08fd361c9"
+          }
+        },
+        {
+          "client_id": "718454508856-dhsotp28sa9n6sj4tstfsvs7fk6kn793.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA2YBFYmMUaaPiexlcIcNzBfqJaUhokEBY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "718454508856-dhsotp28sa9n6sj4tstfsvs7fk6kn793.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

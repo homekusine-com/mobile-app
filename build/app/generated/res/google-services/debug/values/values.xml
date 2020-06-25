@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="default_web_client_id" translatable="false">718454508856-dhsotp28sa9n6sj4tstfsvs7fk6kn793.apps.googleusercontent.com</string>
+    <string name="firebase_database_url" translatable="false">https://homekusine.firebaseio.com</string>
+    <string name="gcm_defaultSenderId" translatable="false">718454508856</string>
+    <string name="google_api_key" translatable="false">AIzaSyA2YBFYmMUaaPiexlcIcNzBfqJaUhokEBY</string>
+    <string name="google_app_id" translatable="false">1:718454508856:android:50048c7ed68021a5bb85cd</string>
+    <string name="google_crash_reporting_api_key" translatable="false">AIzaSyA2YBFYmMUaaPiexlcIcNzBfqJaUhokEBY</string>
+    <string name="google_storage_bucket" translatable="false">homekusine.appspot.com</string>
+    <string name="project_id" translatable="false">homekusine</string>
+</resources>
