@@ -2,16 +2,22 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:homekusine/model/user.model.dart';
 
 class UserServices {
-  String collection = "users";
-  CollectionReference _userCollection = Firestore.instance.collection('collection');
 
-  getUser(String id) => _userCollection.document(id).get();
+  CollectionReference _userCollection = Firestore.instance.collection("users");
 
+  getUser(String id) => _userCollection.document(id).snapshots();
 
-  void createUser(Map<String, dynamic> value) {
-     String id = value['id'];
-     _userCollection.document(id).setData(value);
+  //getter
+  CollectionReference get userCollection => _userCollection;
+
+  createUser(String id, Map<String, dynamic> value) {
+     return _userCollection.document(id).setData(value);
   }
+
+  UserModel setUser(DocumentSnapshot snapshot){
+    return UserModel(phoneNo: snapshot.data['phoneNo']);
+  }
+
 
 
 }

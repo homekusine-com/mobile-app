@@ -1,17 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:homekusine/services/user.services.dart';
+import 'package:homekusine/screens/home/home.dart';
+import 'package:homekusine/providers/auth.provider.dart';
+import 'package:provider/provider.dart';
 
-class Wrapper extends StatefulWidget {
-  @override
-  _WrapperState createState() => _WrapperState();
-}
-
-class _WrapperState extends State<Wrapper> {
-
-
-
+class Wrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Container();
+    final auth = Provider.of<AuthProvider>(context);
+    return StreamBuilder(
+      stream: auth.userData,
+      builder: (BuildContext context, snapshot) {
+        print("users");
+        print(snapshot);
+        return Home();
+//        if(snapshot.hasData){
+//          return Home();
+//        }else{
+//          return Register();
+//        }
+      },
+    );
   }
 }

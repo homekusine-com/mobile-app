@@ -5,11 +5,32 @@ class User {
   User({ this.uid });
 }
 
-class UserModel {
+class CreateUserModel {
   String mobileNo;
-  String id;
+  String countryCode;
+  String country;
+  bool isRegistered;
+  bool isActive;
+  Timestamp createdAt;
+}
+
+class RegisterUserModel {
   String firstName;
   String lastName;
   String gender;
+  String profileName;
+  String DOB;
+  String doorNo;
+  String streetName;
+  String city;
+  String postCode;
+  bool isChef;
+  bool isRegistered;
+  Timestamp updatedAt;
+}
 
+class UserModel {
+  String phoneNo;
+
+  UserModel({this.phoneNo});
 }
