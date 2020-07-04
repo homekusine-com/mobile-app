@@ -1,5 +1,19 @@
 import 'package:flutter/material.dart';
 
+const FormInputDecoration = InputDecoration(
+    fillColor: Colors.transparent,
+    filled: true,
+    enabledBorder: OutlineInputBorder(
+        borderSide: BorderSide(color: Colors.black, width: 2.0)
+    ),
+    focusedBorder: OutlineInputBorder(
+        borderSide: BorderSide(color: Colors.black, width: 2.0)
+    ),
+    errorStyle: TextStyle(
+        fontSize: 18.0,
+    ),
+);
+
 const textInputDecoration = InputDecoration(
     fillColor: Colors.white,
     filled: true,
@@ -12,13 +26,31 @@ const textInputDecoration = InputDecoration(
 );
 
 const linkStyle = TextStyle(
+    color: Colors.black,
+    fontSize: 18.0,
+    decoration: TextDecoration.underline,
+    fontWeight: FontWeight.bold
+);
+
+const linkStyleBlue = TextStyle(
     color: Colors.blue,
-    fontSize: 18.0
+    fontSize: 18.0,
+    decoration: TextDecoration.underline,
+    fontWeight: FontWeight.bold
 );
 
 const dropDownInputDecoration = InputDecoration(
-    fillColor: Colors.white,
+    fillColor: Colors.transparent,
     filled: true,
+    enabledBorder: OutlineInputBorder(
+        borderSide: BorderSide(color: Colors.black, width: 2.0)
+    ),
+    focusedBorder: OutlineInputBorder(
+        borderSide: BorderSide(color: Colors.black, width: 2.0)
+    ),
+    errorStyle: TextStyle(
+        fontSize: 18.0,
+    ),
 );
 
 const defaultProfileImage = "assets/defaultProfilePic.png";

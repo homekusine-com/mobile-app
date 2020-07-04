@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:homekusine/shared/widgets/toaster.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:homekusine/services/user.services.dart';
@@ -16,8 +17,9 @@ class AuthProvider with ChangeNotifier {
   final Future<FirebaseUser> user = FirebaseAuth.instance.currentUser();
 
   final UserServices _userService = UserServices();
+  final toast = Toaster();
 
-  bool loggedIn;
+  bool loggedIn = false;
   Status _status = Status.Loading;
   String _uid;
 
@@ -44,19 +46,21 @@ class AuthProvider with ChangeNotifier {
     await Future.delayed(Duration(seconds: 3)).then((v)async {
       prefs = await SharedPreferences.getInstance();
       loggedIn = prefs.getBool(localStorage['LOGGED_IN']);
-      _authInstance.currentUser().then((user) {
-        if (user.uid != null) {
-          checkIsRegistered(user.uid);
-//          _status = Status.Authenticated;
-//          notifyListeners();
-//          return;
-        } else {
-          _status = Status.Unauthenticated;
-          notifyListeners();
-        }
-      }).catchError((onError) {
-        print(onError.toString());
-      });
+      if(loggedIn == true){
+        _authInstance.currentUser().then((user) {
+          if (user.uid != null) {
+            checkIsRegistered(user.uid);
+          } else {
+            _status = Status.Unauthenticated;
+            notifyListeners();
+          }
+        }).catchError((onError) {
+          print(onError.toString());
+        });
+      }else{
+        _status = Status.Unauthenticated;
+        notifyListeners();
+      }
     });
   }
 
@@ -108,7 +112,9 @@ class AuthProvider with ChangeNotifier {
 
   //signIn
   signIn(AuthCredential authCreds) async {
-    AuthResult result = await _authInstance.signInWithCredential(authCreds);
+    AuthResult result = await _authInstance.signInWithCredential(authCreds).catchError((onError) {
+      toast.showToast('unable to login, invalid OTP');
+    });
     checkIsRegistered(result.user.uid);
   }
 //  signIn(AuthCredential authCreds) async {
@@ -148,7 +154,5 @@ class AuthProvider with ChangeNotifier {
       _uid = val.uid;
     }).catchError((e) => print(e.toString()));
   }
-
-
 }
 

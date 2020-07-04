@@ -106,7 +106,7 @@ class _RegisterState extends State<Register> {
                             padding: const EdgeInsets.only(left: 10.0, right: 10.0),
                             child: Icon(Icons.grid_on, color: Colors.blue),
                           ),
-                          Text('Upload From Gallery', style: linkStyle,),
+                          Text('Upload From Gallery', style: linkStyleBlue,),
                         ],
                       ),
                       onTap: () {
@@ -131,7 +131,7 @@ class _RegisterState extends State<Register> {
                             padding: const EdgeInsets.only(left: 10.0, right: 10.0),
                             child: Icon(Icons.camera_alt, color: Colors.blue),
                           ),
-                          Text('Take a selfie', style: linkStyle,),
+                          Text('Take a selfie', style: linkStyleBlue,),
                         ],
                       ),
                       onTap: () async {
@@ -189,7 +189,7 @@ class _RegisterState extends State<Register> {
                 Padding(
                   padding: const EdgeInsets.only(top: 20.0),
                   child: FlatButton(
-                      color: Colors.blue,
+                      color: Colors.transparent,
                       onPressed: (){
 
                         this.dob = (selectedDOB != null) ? DateFormat('yyyyMMdd').format(selectedDOB) : DateFormat('yyyyMMdd').format(new DateTime(1993, 1, 1));
@@ -253,7 +253,7 @@ class _RegisterState extends State<Register> {
                       child: Center(
                         child: CircleAvatar(
                           radius: 85,
-                          backgroundColor: Colors.blue,
+                          backgroundColor: Colors.black,
                           child: CircleAvatar(
                             radius: 80.0,
                             backgroundImage: AssetImage(profilePicPath),
@@ -271,8 +271,8 @@ class _RegisterState extends State<Register> {
                       padding: const EdgeInsets.all(20.0),
                       child: TextFormField(
                         style: TextStyle(fontSize: 20.0),
-                        decoration: textInputDecoration.copyWith(hintText: "First Name*"),
-                        validator: (val) => val.isEmpty ? 'Please provide a First Name' : RegExp(REGEX_PATTERN['ONLY_ALPHABETS']).hasMatch(val) ? null : 'only alphabets are allowed',
+                        decoration: FormInputDecoration.copyWith(hintText: "First Name*"),
+                        validator: (val) => val.isEmpty ? 'Provide a First Name' : RegExp(REGEX_PATTERN['ONLY_ALPHABETS']).hasMatch(val) ? null : 'only alphabets are allowed',
                         onChanged: (val){
                           setState(() {
                             this.firstName = val;
@@ -284,8 +284,8 @@ class _RegisterState extends State<Register> {
                       padding: const EdgeInsets.all(20.0),
                       child: TextFormField(
                         style: TextStyle(fontSize: 20.0),
-                        decoration: textInputDecoration.copyWith(hintText: "Last Name*"),
-                        validator: (val) => val.isEmpty ? 'Please provide a Last Name' : RegExp(REGEX_PATTERN['ONLY_ALPHABETS']).hasMatch(val) ? null : 'only alphabets are allowed',
+                        decoration: FormInputDecoration.copyWith(hintText: "Last Name*"),
+                        validator: (val) => val.isEmpty ? 'Provide a Last Name' : RegExp(REGEX_PATTERN['ONLY_ALPHABETS']).hasMatch(val) ? null : 'only alphabets are allowed',
                         onChanged: (val){
                           setState(() {
                             this.lastName = val;
@@ -297,8 +297,8 @@ class _RegisterState extends State<Register> {
                       padding: const EdgeInsets.all(20.0),
                       child: TextFormField(
                         style: TextStyle(fontSize: 20.0),
-                        decoration: textInputDecoration.copyWith(hintText: "Profile Name*"),
-                        validator: (val) => val.isEmpty ? 'Please provide a Profile Name' : RegExp(REGEX_PATTERN['ONLY_ALPHANUMERIC']).hasMatch(val) ? null : 'Only Alpha numeric characters',
+                        decoration: FormInputDecoration.copyWith(hintText: "Profile Name*"),
+                        validator: (val) => val.isEmpty ? 'Provide a Profile Name' : RegExp(REGEX_PATTERN['ONLY_ALPHANUMERIC']).hasMatch(val) ? null : 'Only Alpha numeric characters',
                         onChanged: (val){
                          addListnerToTextField();
                           setState(() {
@@ -308,7 +308,7 @@ class _RegisterState extends State<Register> {
                         focusNode: focusProfileNameNode,
                       ),
                     ),
-                    isProfileNameAvailable ? Container() : Text('Profile Name taken, please try with some other name', style: TextStyle(color: Colors.red),),
+                    isProfileNameAvailable ? Container() : Text('Profile Name taken, please try with some other name', style: TextStyle(fontSize: 16.0, color: Colors.red),),
                     Padding(
                       padding: const EdgeInsets.all(20.0),
                       child: Row(
@@ -321,7 +321,7 @@ class _RegisterState extends State<Register> {
                                 showCursor: true,
                                 readOnly: true,
                                 style: TextStyle(fontSize: 20.0),
-                                decoration: textInputDecoration.copyWith(hintText: "DOB*"),
+                                decoration: FormInputDecoration.copyWith(hintText: "DOB*"),
                                 onTap: () => _showDatePicker(),
                               ),
                             ),
@@ -347,7 +347,7 @@ class _RegisterState extends State<Register> {
                                     },
                                     value: this.gender,
                                     decoration: dropDownInputDecoration.copyWith(hintText: "Select a Gender"),
-                                    validator: (val) => val == null ? 'Please select a gender' : null,
+                                    validator: (val) => val == null ? 'Select a gender' : null,
                                 )
                             ),
                             flex: 1,
@@ -364,8 +364,8 @@ class _RegisterState extends State<Register> {
                             child: Container(
                               child: TextFormField(
                                 style: TextStyle(fontSize: 20.0),
-                                decoration: textInputDecoration.copyWith(hintText: "Door No*"),
-                                validator: (val) => val.isEmpty ? 'Please provide a Door No' : RegExp(REGEX_PATTERN['ALPHANUMERIC_SPACE_SOMESPL']).hasMatch(val) ? null : 'No Special chars allowed except / , -',
+                                decoration: FormInputDecoration.copyWith(hintText: "Door No*"),
+                                validator: (val) => val.isEmpty ? 'Provide a Door No' : RegExp(REGEX_PATTERN['ALPHANUMERIC_SPACE_SOMESPL']).hasMatch(val) ? null : 'No Special chars allowed except / , -',
                                 onChanged: (val){
                                   setState(() {
                                     this.doorNo = val;
@@ -380,8 +380,8 @@ class _RegisterState extends State<Register> {
                             child: Container(
                               child: TextFormField(
                                 style: TextStyle(fontSize: 20.0),
-                                decoration: textInputDecoration.copyWith(hintText: "Street Name*"),
-                                validator: (val) => val.isEmpty ? 'Please provide a Street Name' : RegExp(REGEX_PATTERN['ALPHANUMERIC_SPACE_SOMESPL']).hasMatch(val) ? null : 'No Special chars allowed except / , -',
+                                decoration: FormInputDecoration.copyWith(hintText: "Street Name*"),
+                                validator: (val) => val.isEmpty ? 'Provide a Street Name' : RegExp(REGEX_PATTERN['ALPHANUMERIC_SPACE_SOMESPL']).hasMatch(val) ? null : 'No Special chars allowed except / , -',
                                 onChanged: (val){
                                   setState(() {
                                     this.streetName = val;
@@ -403,8 +403,8 @@ class _RegisterState extends State<Register> {
                             child: Container(
                               child: TextFormField(
                                 style: TextStyle(fontSize: 20.0),
-                                decoration: textInputDecoration.copyWith(hintText: "City*"),
-                                validator: (val) => val.isEmpty ? 'Please provide city name' : RegExp(REGEX_PATTERN['ONLY_ALPHABETS']).hasMatch(val) ? null : 'Only Alphabets are allowed',
+                                decoration: FormInputDecoration.copyWith(hintText: "City*"),
+                                validator: (val) => val.isEmpty ? 'Provide city name' : RegExp(REGEX_PATTERN['ONLY_ALPHABETS']).hasMatch(val) ? null : 'Only Alphabets are allowed',
                                 onChanged: (val){
                                   setState(() {
                                     this.city = val;
@@ -420,8 +420,8 @@ class _RegisterState extends State<Register> {
                               child: TextFormField(
                                 style: TextStyle(fontSize: 20.0),
                                 keyboardType: TextInputType.phone,
-                                decoration: textInputDecoration.copyWith(hintText: "Postcode*"),
-                                validator: (val) => val.isEmpty ? 'Please provide a Postcode' : RegExp(REGEX_PATTERN['ONLY_ALPHANUMERIC']).hasMatch(val) ? null : 'No special char allowed',
+                                decoration: FormInputDecoration.copyWith(hintText: "Postcode*"),
+                                validator: (val) => val.isEmpty ? 'Provide a Postcode' : RegExp(REGEX_PATTERN['ONLY_ALPHANUMERIC']).hasMatch(val) ? null : 'No special char allowed',
                                 onChanged: (val){
                                   setState(() {
                                     this.postCode = val;
@@ -437,7 +437,7 @@ class _RegisterState extends State<Register> {
                     Padding(
                       padding: const EdgeInsets.all(20.0),
                       child: RaisedButton(
-                          color: Colors.blue,
+                          color: Colors.transparent,
                           padding: const EdgeInsets.all(15.0),
                           onPressed: () {
                             if(_formKey.currentState.validate() && isProfileNameAvailable){
@@ -469,17 +469,31 @@ class _RegisterState extends State<Register> {
     }
 
     return Scaffold(
-      body: PageView(
-        controller: _pageController,
-        children: [
-          Container(
-            child: personalInfoForm(_pageController),
-          ),
-          Container(
-            child: profilePicUpload(_pageController, this.uploadImageSourceType, onImageUpload)
-          )
-        ]
+      body: DecoratedBox(
+        position: DecorationPosition.background,
+        decoration: BoxDecoration(
+            color: Colors.transparent,
+            image: DecorationImage(
+                image: AssetImage('assets/plateFood.jpg'),
+                fit: BoxFit.cover,
+                colorFilter: new ColorFilter.mode(Colors.black.withOpacity(0.3), BlendMode.dstATop),
+            ),
+        ),
+        child: PageView(
+            physics:new NeverScrollableScrollPhysics(),
+            controller: _pageController,
+            children: [
+              Container(
+                child: personalInfoForm(_pageController),
+              ),
+              Container(
+                  child: profilePicUpload(_pageController, this.uploadImageSourceType, onImageUpload)
+              )
+            ]
+        ),
       )
+
+
     );
   }
 }
@@ -559,7 +573,7 @@ class _ImageCaptureState extends State<ImageCapture> {
         ],
         androidUiSettings: AndroidUiSettings(
             toolbarTitle: 'Cropper',
-            toolbarColor: Colors.deepOrange,
+            toolbarColor: Colors.black38,
             toolbarWidgetColor: Colors.white,
             initAspectRatio: CropAspectRatioPreset.original,
             lockAspectRatio: false),
@@ -601,13 +615,13 @@ class _ImageCaptureState extends State<ImageCapture> {
         ],
       ),
       bottomNavigationBar : BottomAppBar(
-        color: Colors.amber,
+        color: Colors.grey,
         child: Row(
           children: <Widget>[
             Expanded(
               child: Container(
                 child: FlatButton(
-                    color: Colors.amber,
+                    color: Colors.grey,
                     onPressed: () => _cropImage(auth.uid),
                     child: RichText(
                         text: TextSpan(
@@ -631,7 +645,7 @@ class _ImageCaptureState extends State<ImageCapture> {
             Expanded(
               child: Container(
                   child: FlatButton(
-                      color: Colors.amber,
+                      color: Colors.grey,
                       onPressed: () {
                         widget.onImageUpload(_imageFile);
                         backToPrevPage();
@@ -657,7 +671,7 @@ class _ImageCaptureState extends State<ImageCapture> {
             Expanded(
               child: Container(
                 child: FlatButton(
-                  color: Colors.amber,
+                  color: Colors.grey,
                   onPressed: backToPrevPage,
                   child: RichText(
                       text: TextSpan(
