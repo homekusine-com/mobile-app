@@ -148,6 +148,7 @@ class _LoginState extends State<Login> {
                   onChanged: (val){
                     setState(() {
                       this.phoneNo = val;
+                      if(this.codeSent) this.codeSent = false;
                     });
                   },
                 ),

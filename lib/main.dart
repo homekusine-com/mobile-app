@@ -22,16 +22,6 @@ class MyApp extends StatelessWidget {
       return MaterialApp(
         debugShowCheckedModeBanner: false,
           home: ScreensController(),
-//        home: StreamBuilder(
-//          stream: AuthService().authInstance.onAuthStateChanged,
-//          builder: (BuildContext context, snapshot) {
-//            if(snapshot.hasData){
-//                return Wrapper();
-//            }else{
-//              return Login();
-//            }
-//          },
-//        ),
       );
   }
 }

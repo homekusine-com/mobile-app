@@ -15,21 +15,6 @@ class _HomeState extends State<Home> {
   static const TextStyle optionStyle =
   TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
 
-  static const List<Widget> _widgetOptions = <Widget>[
-    Text(
-      'Index 0: Discover',
-      style: optionStyle,
-    ),
-    Text(
-      'Index 1: Cuisine',
-      style: optionStyle,
-    ),
-    Text(
-      'Index 2: Profile',
-      style: optionStyle,
-    ),
-  ];
-
   final UserServices _userServices = UserServices();
 
   void _onItemTapped(int index) {
@@ -41,9 +26,27 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     final auth = Provider.of<AuthProvider>(context);
+
+    final List<Widget> _widgetOptions = <Widget>[
+      Text(
+        'Index 0: Discover',
+        style: optionStyle,
+      ),
+      Text(
+        'Index 1: Cuisine',
+        style: optionStyle,
+      ),
+      Container(
+        child: Center(
+          child: FlatButton(onPressed: () => auth.signOut(), child: Text('Sign Out'), color: Colors.transparent,),
+        ),
+      ),
+    ];
+
     return Scaffold(
         body: Center(
             child: _widgetOptions.elementAt(_selectedIndex),
+
         ),
         bottomNavigationBar: BottomNavigationBar(
           backgroundColor: Colors.white,

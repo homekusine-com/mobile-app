@@ -104,6 +104,7 @@ class AuthProvider with ChangeNotifier {
 
   //signOut
   signOut(){
+    print('signout');
     _authInstance.signOut();
     prefs.setBool(localStorage['LOGGED_IN'], false);
     _status = Status.Unauthenticated;
