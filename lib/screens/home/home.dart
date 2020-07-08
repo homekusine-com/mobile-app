@@ -28,9 +28,18 @@ class _HomeState extends State<Home> {
     final auth = Provider.of<AuthProvider>(context);
 
     final List<Widget> _widgetOptions = <Widget>[
-      Text(
-        'Index 0: Discover',
-        style: optionStyle,
+      Container(
+        child: Column(
+          children: <Widget>[
+            Row(
+              children: <Widget>[
+                Icon(Icons.location_on, color: Colors.lightGreen, size: 35.0,),
+                SizedBox(width: 5.0,),
+                Text('Location', style: TextStyle(fontSize: 30.0),),
+              ],
+            )
+          ],
+        ),
       ),
       Text(
         'Index 1: Cuisine',
@@ -45,7 +54,10 @@ class _HomeState extends State<Home> {
 
     return Scaffold(
         body: Center(
-            child: _widgetOptions.elementAt(_selectedIndex),
+            child: SafeArea(child: Padding(
+              padding: EdgeInsets.only(top: 20.0, left: 10.0, right: 10.0),
+              child: _widgetOptions.elementAt(_selectedIndex),
+            )),
 
         ),
         bottomNavigationBar: BottomNavigationBar(

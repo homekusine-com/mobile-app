@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:homekusine/model/user.model.dart';
 import 'package:homekusine/services/storage.services.dart';
 import 'package:homekusine/services/user.services.dart';
+import 'package:homekusine/services/utility.services.dart';
 import 'package:provider/provider.dart';
 import 'package:homekusine/providers/auth.provider.dart';
 import 'package:homekusine/constance/constance.dart';
@@ -11,6 +12,9 @@ import 'package:intl/intl.dart';
 import 'dart:io';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:homekusine/screens/loadingScreen.dart';
+import 'dart:async';
+import 'package:homekusine/shared/widgets/toaster.dart';
 
 enum ImageUploadStatus {Initialised, SourceInit, Selected, Uploading, Completed}
 
@@ -24,9 +28,11 @@ class _RegisterState extends State<Register> {
   final _formKey = new GlobalKey<FormState>();
   final StorageServices _storageServices = StorageServices();
   final UserServices _userService = UserServices();
+  final UtilityServices _utility = UtilityServices();
 
-  String firstName, lastName, profileName, gender, DOB, doorNo, streetName, city, postCode, isChef, dob, uploadImageSourceType;
+  String firstName, lastName, profileName, gender, DOB, doorNo, streetName, city, postCode, isChef, uploadImageSourceType;
   TextEditingController _dobController = new TextEditingController(text: DateFormat('MMMM dd yyyy').format(new DateTime(1993, 1, 1)));
+  String dob = DateFormat('yyyyMMdd').format(new DateTime(1993, 1, 1));
   bool isProfileNameAvailable = true;
 
   var genderList = ['Male', 'Female', 'TransGender'];
@@ -56,7 +62,6 @@ class _RegisterState extends State<Register> {
   Widget build(BuildContext context) {
 
     final auth = Provider.of<AuthProvider>(context);
-
 
 
     onImageUpload(File newFilePath) {
@@ -214,9 +219,6 @@ class _RegisterState extends State<Register> {
     }
 
     updatePersonalInformation() {
-      if(profilePicPath != defaultProfileImage){
-        _storageServices.startProfilePicUpload(auth.uid, profilePicFile);
-      }
       dynamic userInfo = {
         "firstName" : this.firstName,
         "lastName": this.lastName,
@@ -233,10 +235,13 @@ class _RegisterState extends State<Register> {
       };
       _userService.userCollection.document(auth.uid).updateData(userInfo)
           .then((onValue){
-            print('saved data');
+            _utility.popRoute(context);
+            auth.registrationCompleted();
           })
           .catchError((onError) {
             print(onError.toString());
+            _utility.popRoute(context);
+            Toaster().showToast("Registring failed, Please try again");
           });
     }
 
@@ -419,7 +424,6 @@ class _RegisterState extends State<Register> {
                             child: Container(
                               child: TextFormField(
                                 style: TextStyle(fontSize: 20.0),
-                                keyboardType: TextInputType.phone,
                                 decoration: FormInputDecoration.copyWith(hintText: "Postcode*"),
                                 validator: (val) => val.isEmpty ? 'Provide a Postcode' : RegExp(REGEX_PATTERN['ONLY_ALPHANUMERIC']).hasMatch(val) ? null : 'No special char allowed',
                                 onChanged: (val){
@@ -441,8 +445,8 @@ class _RegisterState extends State<Register> {
                           padding: const EdgeInsets.all(15.0),
                           onPressed: () {
                             if(_formKey.currentState.validate() && isProfileNameAvailable){
+                              _utility.showLoader(context);
                               updatePersonalInformation();
-                              auth.registrationCompleted();
                             }
                           },
                           child: Text(
@@ -520,6 +524,8 @@ class _ImageCaptureState extends State<ImageCapture> {
   //Active image file
   File _imageFile;
   final picker = ImagePicker();
+  final StorageServices _storageServices = StorageServices();
+  final UtilityServices _utility = UtilityServices();
 
   ImageUploadStatus _status = ImageUploadStatus.Initialised;
 
@@ -550,7 +556,7 @@ class _ImageCaptureState extends State<ImageCapture> {
     });
   }
 
-  Future<void> _cropImage(uid) async {
+  Future<void> _cropImage(uid, context) async {
     File cropped = await ImageCropper.cropImage(
         sourcePath: _imageFile.path,
         aspectRatioPresets: Platform.isAndroid
@@ -586,8 +592,26 @@ class _ImageCaptureState extends State<ImageCapture> {
         _imageFile = cropped;
       });
       widget.onImageUpload(cropped);
-      backToPrevPage();
+      _uploadProfileImg(uid, cropped, context);
     }
+  }
+
+  _uploadProfileImg(uid, _imageFile, context) {
+    _utility.showLoader(context);
+    StorageUploadTask task = _storageServices.startProfilePicUpload(uid, _imageFile);
+
+    new Timer.periodic(new Duration(seconds: 1), (timer) {
+      if(task.isSuccessful){
+        _utility.popRoute(context);
+        timer.cancel();
+        backToPrevPage();
+      }
+      if(task.isCanceled){
+        _utility.popRoute(context);
+        Toaster().showToast("Failed to upload your image, Please try again");
+        timer.cancel();
+      }
+    });
   }
 
   @override
@@ -622,7 +646,7 @@ class _ImageCaptureState extends State<ImageCapture> {
               child: Container(
                 child: FlatButton(
                     color: Colors.grey,
-                    onPressed: () => _cropImage(auth.uid),
+                    onPressed: () => _cropImage(auth.uid, context),
                     child: RichText(
                         text: TextSpan(
                             children:[
@@ -648,7 +672,7 @@ class _ImageCaptureState extends State<ImageCapture> {
                       color: Colors.grey,
                       onPressed: () {
                         widget.onImageUpload(_imageFile);
-                        backToPrevPage();
+                        _uploadProfileImg(auth.uid, _imageFile, context);
                       },
                       child: RichText(
                           text: TextSpan(

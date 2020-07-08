@@ -7,6 +7,8 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:homekusine/constance/constance.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:homekusine/services/utility.services.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -16,10 +18,13 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
 
   final _formKey = new GlobalKey<FormState>();
+  final UtilityServices  _utility = new UtilityServices();
+
   String phoneNo, verificationId, smsCode;
   bool codeSent = false;
   SharedPreferences prefs;
   bool isCountryCodeReady = false;
+  bool isprocessing = false;
 
   Country _selectedCountry;
 
@@ -54,15 +59,22 @@ class _LoginState extends State<Login> {
   Widget build(BuildContext context) {
     final auth = Provider.of<AuthProvider>(context);
 
-
+    signIn() {
+      _utility.showLoader(context);
+      auth.signInWithOTP(smsCode, verificationId, context);
+    }
     Future<void> verifyPhone(phoneNoWtihCode) async {
+      setState(() {
+        isprocessing = true;
+      });
       prefs = await SharedPreferences.getInstance();
       prefs.setString(localStorage['MOBILE'], phoneNo);
       prefs.setString(localStorage['COUNTRY_CODE'], _selectedCountry?.callingCode);
       prefs.setString(localStorage['COUNTRY'], _selectedCountry?.name);
 
       final PhoneVerificationCompleted verified = (AuthCredential authResult) {
-        auth.signIn(authResult);
+        _utility.showLoader(context);
+        auth.signIn(authResult, context);
       };
 
       final PhoneVerificationFailed verificationFailed = (AuthException exception) {
@@ -74,6 +86,7 @@ class _LoginState extends State<Login> {
         this.verificationId = verId;
         setState(() {
           this.codeSent = true;
+          isprocessing = false;
         });
       };
 
@@ -129,7 +142,7 @@ class _LoginState extends State<Login> {
                       child: Text(
                         _selectedCountry == null
                             ? ''
-                            : '${_selectedCountry?.callingCode ?? '+code'} ${_selectedCountry?.name ?? 'Name'} (${_selectedCountry?.countryCode ?? 'Country code'})',
+                            : '${_selectedCountry?.callingCode ?? '+code'} - (${_selectedCountry?.countryCode ?? 'Country code'})',
                         textAlign: TextAlign.center,
                         style: TextStyle(fontSize: 30, decoration: TextDecoration.underline, color: Colors.black),
                       ),
@@ -172,36 +185,23 @@ class _LoginState extends State<Login> {
                   Expanded(
                     child: Padding(
                       padding: EdgeInsets.all(25.0),
-                      child: RaisedButton(
+                      child: !isprocessing ? RaisedButton(
                         color: Colors.transparent,
                         child: Center(
                           child: !codeSent ? Text('Send OTP') : Text('Login'),
                         ),
                         onPressed: (){
                           if(_formKey.currentState.validate()){
-                            !codeSent ? verifyPhone(_selectedCountry?.callingCode + phoneNo) : auth.signInWithOTP(smsCode, verificationId);;
+                            !codeSent ? verifyPhone(_selectedCountry?.callingCode + phoneNo) : signIn();
                           }
                         },
+                      )
+                      : SpinKitThreeBounce(
+                        color: Colors.black45,
+                        size: 30.0,
                       ),
                     ),
-                    flex: 2,
-                  ),
-//                  Expanded(
-//                    child: Padding(
-//                      padding: EdgeInsets.all(25.0),
-//                      child: RaisedButton(
-//                        color: Colors.transparent,
-//                        child: Center(
-//                          child: Text('Login'),
-//                        ),
-//                        onPressed: (){
-//                          if(_formKey.currentState.validate()){
-//                            auth.signInWithOTP(smsCode, verificationId);
-//                          }
-//                        },
-//                      ),
-//                    ),
-//                  ),
+                  )
                 ],
               )
             ],

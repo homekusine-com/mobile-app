@@ -12,6 +12,6 @@ class StorageServices {
 
   startProfilePicUpload(String uid, File file) {
     String filePath = '${storagePaths['profilePic']}/$uid.png';
-    return _uploadTask = _storage.ref().child(filePath).putFile(file);
+    return _storage.ref().child(filePath).putFile(file);
   }
 }

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:homekusine/services/utility.services.dart';
 import 'package:homekusine/shared/widgets/toaster.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -17,6 +18,7 @@ class AuthProvider with ChangeNotifier {
   final Future<FirebaseUser> user = FirebaseAuth.instance.currentUser();
 
   final UserServices _userService = UserServices();
+  final UtilityServices _utility = UtilityServices();
   final toast = Toaster();
 
   bool loggedIn = false;
@@ -49,7 +51,7 @@ class AuthProvider with ChangeNotifier {
       if(loggedIn == true){
         _authInstance.currentUser().then((user) {
           if (user.uid != null) {
-            checkIsRegistered(user.uid);
+            checkIsRegistered(user.uid, null);
           } else {
             _status = Status.Unauthenticated;
             notifyListeners();
@@ -64,16 +66,20 @@ class AuthProvider with ChangeNotifier {
     });
   }
 
-  checkIsRegistered(uid) async {
+  checkIsRegistered(uid, context) async {
     _uid = uid;
     _userService.userCollection.document(uid).get().then((dataSnapshot){
       if(dataSnapshot.data != null){
         if(dataSnapshot.data['isRegistered'] != null && dataSnapshot.data['isRegistered'] != false) {
           _status = Status.Authenticated;
           prefs.setBool(localStorage['LOGGED_IN'], true);
+          if(context != null)
+            _utility.popRoute(context);
           notifyListeners();
         }else {
           _status = Status.Register;
+          if(context != null)
+            _utility.popRoute(context);
           notifyListeners();
         }
       }else{
@@ -88,6 +94,8 @@ class AuthProvider with ChangeNotifier {
          _userService.userCollection.document(uid).setData(newUser)
              .then((onValue){
                _status = Status.Register;
+               if(context != null)
+                 _utility.popRoute(context);
                notifyListeners();
              })
              .catchError((onError) {
@@ -112,42 +120,18 @@ class AuthProvider with ChangeNotifier {
   }
 
   //signIn
-  signIn(AuthCredential authCreds) async {
+  signIn(AuthCredential authCreds, context) async {
     AuthResult result = await _authInstance.signInWithCredential(authCreds).catchError((onError) {
+      _utility.popRoute(context);
       toast.showToast('unable to login, invalid OTP');
     });
-    checkIsRegistered(result.user.uid);
+    checkIsRegistered(result.user.uid, context);
   }
-//  signIn(AuthCredential authCreds) async {
-//    _authInstance.signInWithCredential(authCreds).then((data) {
-//      print('signin sucess');
-//      user.then((val) {
-//        _uid = val.uid;
-//
-//           print("----user data -----");
-//          _userService.userCollection.document(val.uid).get()
-//              .then((DocumentSnapshot ds) {
-//                print(ds);
-//                print(ds.data);
-//              }).catchError((e){
-//                print('user data retriving error:  ${e.toString()}');
-//          });
-////          _status = Status.Authenticated;
-////          prefs.setBool(localStorage['LOGGED_IN'], true);
-////          notifyListeners();
-//
-//      }).catchError((e) => print(e.toString()));
-//    }).catchError((e) {
-//      print('signin fail');
-//      print(e.toString());
-//    });
-//    print('signin fnx complete');
-//  }
 
   //signIn with OTP
-  signInWithOTP(smsCode, verId) {
+  signInWithOTP(smsCode, verId, context) {
     AuthCredential authCreds = PhoneAuthProvider.getCredential(verificationId: verId, smsCode: smsCode);
-    signIn(authCreds);
+    signIn(authCreds, context);
   }
 
   getCurrentUser() {
