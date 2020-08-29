@@ -1,4 +1,8 @@
+import 'dart:convert';
+
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:homekusine/services/storage.services.dart';
 import 'package:homekusine/services/user.services.dart';
 import 'package:homekusine/providers/auth.provider.dart';
 import 'package:provider/provider.dart';
@@ -16,11 +20,14 @@ class _HomeState extends State<Home> {
 
   int _selectedIndex = 0;
 
+  StorageServices _storageServices = new StorageServices();
+
   static const TextStyle optionStyle =
   TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
 
   final UserServices _userServices = UserServices();
   SharedPreferences prefs;
+
 
   void _onItemTapped(int index) {
     setState(() {
@@ -28,7 +35,7 @@ class _HomeState extends State<Home> {
     });
   }
 
-  Future<void> getCurrentLocation() async {
+  Future getScreenInfo() async {
     prefs = await SharedPreferences.getInstance();
     String location = prefs.getString(localStorage['LOCATION']);
     var locationObj = location.split(',').map((String point) => point.split(": ")[1]);
@@ -40,7 +47,28 @@ class _HomeState extends State<Home> {
     var addressMap = addresses.first.toMap();
     prefs.setString(localStorage['LOCATIONINFO'], addressMap.toString());
 
-    return addressMap['subLocality'];
+    String userInfo = prefs.getString(localStorage['USER_INFO']);
+    var result = {
+      "currectLocation": addressMap['subLocality'],
+      "userInfo": userInfo
+    };
+    return result;
+  }
+
+  Future getProfileScreenInfo() async {
+    String userInfo = prefs.getString(localStorage['USER_INFO']);
+    var result = {
+      "userInfo": jsonDecode(userInfo)
+    };
+    return result;
+  }
+
+  Future _getProfileImage(context, uid) async {
+    var downloadUrl = await _storageServices.getProfilePicDownloadUrl(uid);
+    return downloadUrl.toString();
+//    return Image.network(
+//      downloadUrl.toString(),
+//    );
   }
 
   @override
@@ -52,7 +80,7 @@ class _HomeState extends State<Home> {
         child: Column(
           children: <Widget>[
               FutureBuilder(
-                future: getCurrentLocation(),
+                future: getScreenInfo(),
                 builder: (context, snapshot) {
                   if(snapshot.data != null){
                     return Column(
@@ -65,7 +93,7 @@ class _HomeState extends State<Home> {
                                   children: <Widget>[
                                     Icon(Icons.location_on, color: Colors.redAccent, size: 35.0,),
                                     SizedBox(width: 5.0,),
-                                    Text(snapshot.data, style: TextStyle(color: Colors.black,fontSize: 30.0, decoration: TextDecoration.underline),),
+                                    Text(snapshot.data['currectLocation'], style: TextStyle(color: Colors.black,fontSize: 30.0, decoration: TextDecoration.underline),),
                                   ],
                                 )
                             )
@@ -141,9 +169,86 @@ class _HomeState extends State<Home> {
         style: optionStyle,
       ),
       Container(
-        child: Center(
-          child: FlatButton(onPressed: () => auth.signOut(), child: Text('Sign Out'), color: Colors.transparent,),
-        ),
+        child:
+          FutureBuilder(
+            future: getProfileScreenInfo(),
+            builder: (context, snapshot) {
+                if(snapshot.data != null){
+                  var userInfo = snapshot.data['userInfo'];
+                  return Column(
+                    children: <Widget>[
+                      Row(
+                        children: <Widget>[
+                          Expanded(
+                            child: FutureBuilder(
+                              future: _getProfileImage(context, auth.uid),
+                              builder: (context, snapshot) {
+                                if(snapshot.data != null){
+                                  return CircleAvatar(
+                                    radius: 42,
+                                    backgroundColor: Colors.grey[100],
+                                    child: CircleAvatar(
+                                      radius: 40.0,
+                                      backgroundImage: NetworkImage(snapshot.data),
+                                    ),
+                                  );
+                                }else {
+                                  return CircleAvatar(
+                                    radius: 42,
+                                    backgroundColor: Colors.grey[100],
+                                    child: CircleAvatar(
+                                      radius: 40.0,
+                                      backgroundImage: AssetImage(defaultProfileImage),
+                                    ),
+                                  );
+                                }
+                              }
+                            ),
+                            flex: 1,
+                          ),
+                          SizedBox(width: 10),
+                          Expanded(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: <Widget>[
+                                Text(userInfo['profileName'], style: TextStyle(fontSize: 30.0,fontWeight: FontWeight.bold)),
+                                SizedBox(height: 10,),
+                                Text(userInfo['mobileNo'], style: TextStyle(fontSize: 20.0),),
+                              ],
+                            ),
+                            flex: 3,
+                          ),
+                        ],
+                      ),
+                      Divider(
+                        color: Colors.black,
+                      ),
+                      Center(
+                        child: FlatButton(onPressed: () => auth.signOut(), child: Text('Sign Out'), color: Colors.transparent,),
+                      ),
+                    ],
+                  );
+                }else{
+                  return Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Container(
+                          height: MediaQuery.of(context).size.height - 100,
+                          width: MediaQuery.of(context).size.width,
+                          color: Colors.white,
+                          child: Center(
+                            child: SpinKitDualRing(
+                              color: Colors.redAccent,
+                              size: 50.0,
+                            ),
+                          ),
+                        )
+                      ]
+                  );
+                }
+            }
+          )
       ),
     ];
 

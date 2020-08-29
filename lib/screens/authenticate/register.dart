@@ -259,7 +259,7 @@ class _RegisterState extends State<Register> {
                           radius: 85,
                           backgroundColor: Colors.black,
                           child: CircleAvatar(
-                            radius: 80.0,
+                            radius: 30.0,
                             backgroundImage: AssetImage(profilePicPath),
                           ),
                         )

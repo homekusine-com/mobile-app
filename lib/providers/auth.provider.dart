@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:homekusine/services/utility.services.dart';
@@ -94,6 +95,9 @@ class AuthProvider with ChangeNotifier {
     _userService.userCollection.document(uid).get().then((dataSnapshot){
       if(dataSnapshot.data != null){
         if(dataSnapshot.data['isRegistered'] != null && dataSnapshot.data['isRegistered'] != false) {
+          var userDetails = dataSnapshot.data;
+          userDetails.removeWhere((key, value) => (key == "createdAt" || key == "updatedAt"));
+          prefs.setString(localStorage['USER_INFO'], jsonEncode(userDetails));
           _status = Status.Authenticated;
           prefs.setBool(localStorage['LOGGED_IN'], true);
           if(context != null)
