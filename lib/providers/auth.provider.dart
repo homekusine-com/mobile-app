@@ -9,6 +9,8 @@ import 'package:homekusine/services/user.services.dart';
 import 'package:homekusine/constance/constance.dart';
 import 'package:homekusine/model/user.model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:location_permissions/location_permissions.dart';
 
 enum Status { Loading, Authenticated, Unauthenticated, Register }
 
@@ -45,8 +47,29 @@ class AuthProvider with ChangeNotifier {
   }
 
   Future<void> readPrefs() async {
-    await Future.delayed(Duration(seconds: 3)).then((v)async {
       prefs = await SharedPreferences.getInstance();
+
+      PermissionStatus permission = await LocationPermissions().checkPermissionStatus();
+      print('status: $permission');
+      if(permission.toString() == "PermissionStatus.denied"){
+        PermissionStatus requestPermission = await LocationPermissions().requestPermissions();
+      }
+    GeolocationStatus geolocationStatus  = await Geolocator().checkGeolocationPermissionStatus();
+    print('geolocationStatus -  $geolocationStatus');
+    if(geolocationStatus.toString() != "GeolocationStatus.granted"){
+      print('turn on');
+    }else{
+      Position position = await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+      if(position != null){
+        prefs.setString(localStorage['LOCATION'], position.toString());
+      }else {
+        Position lastPosition = await Geolocator().getLastKnownPosition(desiredAccuracy: LocationAccuracy.high);
+        if(lastPosition != null) {
+          prefs.setString(localStorage['LOCATION'], lastPosition.toString());
+        }
+      }
+    }
+      
       loggedIn = prefs.getBool(localStorage['LOGGED_IN']);
       if(loggedIn == true){
         _authInstance.currentUser().then((user) {
@@ -63,7 +86,7 @@ class AuthProvider with ChangeNotifier {
         _status = Status.Unauthenticated;
         notifyListeners();
       }
-    });
+    
   }
 
   checkIsRegistered(uid, context) async {

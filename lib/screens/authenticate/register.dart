@@ -1,6 +1,5 @@
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:homekusine/model/user.model.dart';
 import 'package:homekusine/services/storage.services.dart';
 import 'package:homekusine/services/user.services.dart';
 import 'package:homekusine/services/utility.services.dart';
@@ -12,7 +11,7 @@ import 'package:intl/intl.dart';
 import 'dart:io';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:homekusine/screens/loadingScreen.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'dart:async';
 import 'package:homekusine/shared/widgets/toaster.dart';
 
@@ -541,7 +540,6 @@ class _ImageCaptureState extends State<ImageCapture> {
   Future<void> _pickImage(ImageSource source) async {
     final selected = await picker.getImage(source: source);
     if(selected != null && selected.path != null){
-      print(selected.path);
       setState(() {
         _imageFile = File(selected.path);
       });
@@ -559,24 +557,9 @@ class _ImageCaptureState extends State<ImageCapture> {
   Future<void> _cropImage(uid, context) async {
     File cropped = await ImageCropper.cropImage(
         sourcePath: _imageFile.path,
-        aspectRatioPresets: Platform.isAndroid
-            ? [
-          CropAspectRatioPreset.square,
-          CropAspectRatioPreset.ratio3x2,
-          CropAspectRatioPreset.original,
-          CropAspectRatioPreset.ratio4x3,
-          CropAspectRatioPreset.ratio16x9
-        ]
-            : [
-          CropAspectRatioPreset.original,
-          CropAspectRatioPreset.square,
-          CropAspectRatioPreset.ratio3x2,
-          CropAspectRatioPreset.ratio4x3,
-          CropAspectRatioPreset.ratio5x3,
-          CropAspectRatioPreset.ratio5x4,
-          CropAspectRatioPreset.ratio7x5,
-          CropAspectRatioPreset.ratio16x9
-        ],
+        maxHeight: 512,
+        maxWidth: 512,
+        aspectRatioPresets: [CropAspectRatioPreset.square],
         androidUiSettings: AndroidUiSettings(
             toolbarTitle: 'Cropper',
             toolbarColor: Colors.black38,
@@ -588,11 +571,9 @@ class _ImageCaptureState extends State<ImageCapture> {
         )
     );
     if (cropped != null) {
-      setState(() {
-        _imageFile = cropped;
-      });
-      widget.onImageUpload(cropped);
-      _uploadProfileImg(uid, cropped, context);
+      var result = await FlutterImageCompress.compressAndGetFile(cropped.path, _imageFile.path, quality: 50);
+      widget.onImageUpload(result);
+      _uploadProfileImg(uid, result, context);
     }
   }
 
@@ -665,32 +646,6 @@ class _ImageCaptureState extends State<ImageCapture> {
                 ),
               ),
               flex: 1,
-            ),
-            Expanded(
-              child: Container(
-                  child: FlatButton(
-                      color: Colors.grey,
-                      onPressed: () {
-                        widget.onImageUpload(_imageFile);
-                        _uploadProfileImg(auth.uid, _imageFile, context);
-                      },
-                      child: RichText(
-                          text: TextSpan(
-                              children:[
-                                WidgetSpan(
-                                  child: Icon(Icons.save, size: 20.0, color: Colors.white),
-                                ),
-                                TextSpan(
-                                    text: "  Save",
-                                    style: TextStyle(
-                                        fontSize: 20.0
-                                    )
-                                ),
-                              ]
-                          )
-                      )
-                  )
-              )
             ),
             Expanded(
               child: Container(

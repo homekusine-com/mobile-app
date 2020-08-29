@@ -65,7 +65,9 @@ const localStorage = {
     'uid': "uid",
     'COUNTRY_CODE': "countryCode",
     "MOBILE": "MobileNo",
-    "COUNTRY": "country"
+    "COUNTRY": "country",
+    "LOCATION": "location",
+    "LOCATIONINFO": "locationInfo"
 };
 
 const REGEX_PATTERN = {

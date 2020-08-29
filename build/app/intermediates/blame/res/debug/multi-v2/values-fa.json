@@ -4,7 +4,7 @@
             "outputFile": "/Users/pradeepb/AndroidStudioProjects/mobile-app/build/app/intermediates/incremental/mergeDebugResources/merged.dir/values-fa/values-fa.xml",
             "map": [
                 {
-                    "source": "/Users/pradeepb/.gradle/caches/transforms-2/files-2.1/ee22b94082939f5e5180f6ac89b39a1f/jetified-play-services-basement-17.0.0/res/values-fa/values.xml",
+                    "source": "/Users/pradeepb/.gradle/caches/transforms-2/files-2.1/75e191ab76d3d455d9f5e9efe84adf04/jetified-play-services-basement-17.2.1/res/values-fa/values.xml",
                     "from": {
                         "startLines": "4",
                         "startColumns": "0",
@@ -21,24 +21,7 @@
                     }
                 },
                 {
-                    "source": "/Users/pradeepb/.gradle/caches/transforms-2/files-2.1/3aaf6e5219b7f981ec263df919098c6f/core-1.1.0/res/values-fa/values-fa.xml",
-                    "from": {
-                        "startLines": "2",
-                        "startColumns": "4",
-                        "startOffsets": "55",
-                        "endColumns": "100",
-                        "endOffsets": "151"
-                    },
-                    "to": {
-                        "startLines": "48",
-                        "startColumns": "4",
-                        "startOffsets": "5606",
-                        "endColumns": "100",
-                        "endOffsets": "5702"
-                    }
-                },
-                {
-                    "source": "/Users/pradeepb/.gradle/caches/transforms-2/files-2.1/6eb14f512292913515d869914807ad40/play-services-base-17.1.0/res/values-fa/values.xml",
+                    "source": "/Users/pradeepb/.gradle/caches/transforms-2/files-2.1/c74e9d76b9181d3585ba58111e512b89/play-services-base-17.2.1/res/values-fa/values.xml",
                     "from": {
                         "startLines": "4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20",
                         "startColumns": "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0",
@@ -69,6 +52,23 @@
                         "startOffsets": "105,215,316,427,511,612,727,807,885,978,1072,1164,1258,1361,1456,1553,1647,1740,1830,1911,2019,2123,2221,2327,2432,2537,2694,5525",
                         "endColumns": "109,100,110,83,100,114,79,77,92,93,91,93,102,94,96,93,92,89,80,107,103,97,105,104,104,156,100,80",
                         "endOffsets": "210,311,422,506,607,722,802,880,973,1067,1159,1253,1356,1451,1548,1642,1735,1825,1906,2014,2118,2216,2322,2427,2532,2689,2790,5601"
+                    }
+                },
+                {
+                    "source": "/Users/pradeepb/.gradle/caches/transforms-2/files-2.1/35f29bb1a578f0319e9c3e21730b6b49/core-1.2.0/res/values-fa/values-fa.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endColumns": "100",
+                        "endOffsets": "151"
+                    },
+                    "to": {
+                        "startLines": "48",
+                        "startColumns": "4",
+                        "startOffsets": "5606",
+                        "endColumns": "100",
+                        "endOffsets": "5702"
                     }
                 }
             ]

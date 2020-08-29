@@ -21,7 +21,24 @@
                     }
                 },
                 {
-                    "source": "/Users/pradeepb/.gradle/caches/transforms-2/files-2.1/ee22b94082939f5e5180f6ac89b39a1f/jetified-play-services-basement-17.0.0/res/values-nb/values.xml",
+                    "source": "/Users/pradeepb/.gradle/caches/transforms-2/files-2.1/35f29bb1a578f0319e9c3e21730b6b49/core-1.2.0/res/values-nb/values-nb.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endColumns": "100",
+                        "endOffsets": "151"
+                    },
+                    "to": {
+                        "startLines": "48",
+                        "startColumns": "4",
+                        "startOffsets": "5518",
+                        "endColumns": "100",
+                        "endOffsets": "5614"
+                    }
+                },
+                {
+                    "source": "/Users/pradeepb/.gradle/caches/transforms-2/files-2.1/75e191ab76d3d455d9f5e9efe84adf04/jetified-play-services-basement-17.2.1/res/values-nb/values.xml",
                     "from": {
                         "startLines": "4",
                         "startColumns": "0",
@@ -38,7 +55,7 @@
                     }
                 },
                 {
-                    "source": "/Users/pradeepb/.gradle/caches/transforms-2/files-2.1/6eb14f512292913515d869914807ad40/play-services-base-17.1.0/res/values-nb/values.xml",
+                    "source": "/Users/pradeepb/.gradle/caches/transforms-2/files-2.1/c74e9d76b9181d3585ba58111e512b89/play-services-base-17.2.1/res/values-nb/values.xml",
                     "from": {
                         "startLines": "4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20",
                         "startColumns": "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0",
@@ -52,23 +69,6 @@
                         "startOffsets": "2737,2844,3035,3163,3274,3489,3621,3771,4092,4305,4414,4606,4736,4937,5143,5240,5332",
                         "endColumns": "106,190,127,110,214,131,149,131,212,108,191,129,200,205,96,91,106",
                         "endOffsets": "2839,3030,3158,3269,3484,3616,3766,3898,4300,4409,4601,4731,4932,5138,5235,5327,5434"
-                    }
-                },
-                {
-                    "source": "/Users/pradeepb/.gradle/caches/transforms-2/files-2.1/3aaf6e5219b7f981ec263df919098c6f/core-1.1.0/res/values-nb/values-nb.xml",
-                    "from": {
-                        "startLines": "2",
-                        "startColumns": "4",
-                        "startOffsets": "55",
-                        "endColumns": "100",
-                        "endOffsets": "151"
-                    },
-                    "to": {
-                        "startLines": "48",
-                        "startColumns": "4",
-                        "startOffsets": "5518",
-                        "endColumns": "100",
-                        "endOffsets": "5614"
                     }
                 }
             ]
