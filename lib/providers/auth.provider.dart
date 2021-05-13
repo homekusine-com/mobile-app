@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:homekusine/services/storage.services.dart';
 import 'package:homekusine/services/utility.services.dart';
 import 'package:homekusine/shared/widgets/toaster.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -9,9 +10,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:homekusine/services/user.services.dart';
 import 'package:homekusine/constance/constance.dart';
 import 'package:homekusine/model/user.model.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:location_permissions/location_permissions.dart';
+import 'package:homekusine/shared/widgets/toaster.dart';
 
 enum Status { Loading, Authenticated, Unauthenticated, Register }
 
@@ -37,7 +38,6 @@ class AuthProvider with ChangeNotifier {
   //Stream
   Stream<UserModel> get userData {
     if(_uid != null){
-      print("Strem of user data : ${_uid}");
       return _userService.userCollection.document(_uid).snapshots().map(_userService.setUser);
     }
   }
@@ -49,18 +49,9 @@ class AuthProvider with ChangeNotifier {
 
   Future<void> readPrefs() async {
       prefs = await SharedPreferences.getInstance();
-
-      PermissionStatus permission = await LocationPermissions().checkPermissionStatus();
-      print('status: $permission');
-      if(permission.toString() == "PermissionStatus.denied"){
-        PermissionStatus requestPermission = await LocationPermissions().requestPermissions();
-      }
-    GeolocationStatus geolocationStatus  = await Geolocator().checkGeolocationPermissionStatus();
-    print('geolocationStatus -  $geolocationStatus');
-    if(geolocationStatus.toString() != "GeolocationStatus.granted"){
-      print('turn on');
-    }else{
+      GeolocationStatus geolocationStatus  = await Geolocator().checkGeolocationPermissionStatus();
       Position position = await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+
       if(position != null){
         prefs.setString(localStorage['LOCATION'], position.toString());
       }else {
@@ -69,7 +60,6 @@ class AuthProvider with ChangeNotifier {
           prefs.setString(localStorage['LOCATION'], lastPosition.toString());
         }
       }
-    }
       
       loggedIn = prefs.getBool(localStorage['LOGGED_IN']);
       if(loggedIn == true){
@@ -81,7 +71,7 @@ class AuthProvider with ChangeNotifier {
             notifyListeners();
           }
         }).catchError((onError) {
-          print(onError.toString());
+          toast.showToast(onError.toString());
         });
       }else{
         _status = Status.Unauthenticated;
@@ -89,6 +79,16 @@ class AuthProvider with ChangeNotifier {
       }
     
   }
+
+//  fetchDp() async {
+//    var profileImgDownloadUrl = await StorageServices().getProfilePicDownloadUrl(uid);
+//    if(profileImgDownloadUrl != null){
+//      print('dp url from local storage');
+//      print(profileImgDownloadUrl);
+//      print(jsonEncode(profileImgDownloadUrl));
+//      prefs.setString(localStorage['USER_PROFILE_PIC_URL'], jsonEncode(profileImgDownloadUrl));
+//    }
+//  }
 
   checkIsRegistered(uid, context) async {
     _uid = uid;
@@ -113,6 +113,7 @@ class AuthProvider with ChangeNotifier {
         dynamic newUser = {
           "isRegistered": false,
           "isActive": false ,
+          "isDp": false,
           "mobileNo": prefs.getString(localStorage['MOBILE']),
           "countryCode": prefs.getString(localStorage['COUNTRY_CODE']),
           "country": prefs.getString(localStorage['COUNTRY']),
@@ -126,9 +127,13 @@ class AuthProvider with ChangeNotifier {
                notifyListeners();
              })
              .catchError((onError) {
-                print(onError.toString());
+               toast.showToast(onError.toString());
              });
       }
+    }).catchError((onError) {
+//      print('no user found');
+//      print(onError.toString());
+      toast.showToast(onError.toString());
     });
   }
 
@@ -139,9 +144,8 @@ class AuthProvider with ChangeNotifier {
 
   //signOut
   signOut(){
-    print('signout');
     _authInstance.signOut();
-    prefs.setBool(localStorage['LOGGED_IN'], false);
+    prefs.clear();
     _status = Status.Unauthenticated;
     notifyListeners();
   }
@@ -150,7 +154,12 @@ class AuthProvider with ChangeNotifier {
   signIn(AuthCredential authCreds, context) async {
     AuthResult result = await _authInstance.signInWithCredential(authCreds).catchError((onError) {
       _utility.popRoute(context);
-      toast.showToast('unable to login, invalid OTP');
+      if(onError.toString().contains('ERROR_INVALID_VERIFICATION_CODE')) {
+        Toaster().showToast('Invalid OTP, Try using valid OTP');
+      }else {
+        Toaster().showToast('onError.toString()');
+      }
+      // toast.showToast(onError.toString());
     });
     checkIsRegistered(result.user.uid, context);
   }
@@ -164,7 +173,7 @@ class AuthProvider with ChangeNotifier {
   getCurrentUser() {
     user.then((val) {
       _uid = val.uid;
-    }).catchError((e) => print(e.toString()));
+    }).catchError((e) => toast.showToast(e.toString()));
   }
 }
 

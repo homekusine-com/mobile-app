@@ -17,7 +17,4 @@ class UserServices {
   UserModel setUser(DocumentSnapshot snapshot){
     return UserModel(phoneNo: snapshot.data['phoneNo']);
   }
-
-
-
 }

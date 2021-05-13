@@ -5,6 +5,7 @@ import 'package:homekusine/screens/home/home.dart';
 import 'package:homekusine/screens/splash.dart';
 import 'package:homekusine/screens/authenticate/login.dart';
 import 'package:provider/provider.dart';
+import 'package:homekusine/constance/constance.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,6 +22,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
       return MaterialApp(
         debugShowCheckedModeBanner: false,
+          theme: ThemeData(
+            primaryColor: COLOR_PALATE['primary'],
+          ),
           home: ScreensController(),
       );
   }

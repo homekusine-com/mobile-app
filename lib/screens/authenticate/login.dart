@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:country_calling_code_picker/picker.dart';
 import 'package:homekusine/providers/auth.provider.dart';
 import 'package:homekusine/screens/splash.dart';
+import 'package:homekusine/shared/widgets/toaster.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:homekusine/constance/constance.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:homekusine/services/utility.services.dart';
 
@@ -78,8 +78,8 @@ class _LoginState extends State<Login> {
       };
 
       final PhoneVerificationFailed verificationFailed = (AuthException exception) {
-        print('exception.message: ${exception.message.toString()}');
-        // showToast("mobile number entered is not valid");
+        // print('exception.message: ${exception.message.toString()}');
+        Toaster().showToast("mobile number entered is not valid");
       };
 
       final PhoneCodeSent smsSent = (String verId, [int forceResend]) {

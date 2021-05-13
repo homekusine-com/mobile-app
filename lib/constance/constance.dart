@@ -14,6 +14,21 @@ const FormInputDecoration = InputDecoration(
     ),
 );
 
+const FormInputBottomDecoration = InputDecoration(
+    fillColor: Colors.transparent,
+    filled: true,
+    enabledBorder: UnderlineInputBorder(
+        borderSide: BorderSide(color: Colors.lightBlue),
+    ),
+    focusedBorder: UnderlineInputBorder(
+        borderSide: BorderSide(color: Colors.lightBlueAccent, width: 2.0)
+    ),
+    errorStyle: TextStyle(
+        fontSize: 18.0,
+    ),
+    hintStyle: TextStyle(color: Colors.lightBlue)
+);
+
 const textInputDecoration = InputDecoration(
     fillColor: Colors.white,
     filled: true,
@@ -54,6 +69,7 @@ const dropDownInputDecoration = InputDecoration(
 );
 
 const defaultProfileImage = "assets/defaultProfilePic.png";
+const defaultPostImage = "assets/plateFood.jpg";
 
 const storagePaths = {
   "profilePic": "ProfilePicture",
@@ -68,7 +84,8 @@ const localStorage = {
     "COUNTRY": "country",
     "LOCATION": "location",
     "LOCATIONINFO": "locationInfo",
-    "USER_INFO": "userInfo"
+    "USER_INFO": "userInfo",
+    "USER_PROFILE_PIC_URL": "profilePictureURL"
 };
 
 const REGEX_PATTERN = {
@@ -77,4 +94,8 @@ const REGEX_PATTERN = {
     "ONLY_ALPHANUMERIC": r'^[a-zA-Z0-9]*$',
     "ALPHANUMERIC_SPACE": r'^[a-zA-Z0-9 ]*$',
     "ALPHANUMERIC_SPACE_SOMESPL": r'^[a-zA-Z0-9 /,-]*$'
+};
+
+const COLOR_PALATE = {
+  "primary": Colors.redAccent
 };

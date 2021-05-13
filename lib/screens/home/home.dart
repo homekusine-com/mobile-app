@@ -1,7 +1,8 @@
 import 'dart:convert';
-
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:homekusine/screens/chef/chefProfile.dart';
+import 'package:homekusine/screens/post/createPost.dart';
 import 'package:homekusine/services/storage.services.dart';
 import 'package:homekusine/services/user.services.dart';
 import 'package:homekusine/providers/auth.provider.dart';
@@ -10,6 +11,7 @@ import 'package:geocoder/geocoder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:homekusine/constance/constance.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:homekusine/shared/widgets/toaster.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -41,10 +43,10 @@ class _HomeState extends State<Home> {
     var locationObj = location.split(',').map((String point) => point.split(": ")[1]);
     var lat = double.parse(locationObj.first);
     var lon = double.parse(locationObj.last);
-    print('current location: $location');
     final coordinates = new Coordinates(lat, lon);
     var addresses = await Geocoder.local.findAddressesFromCoordinates(coordinates);
     var addressMap = addresses.first.toMap();
+
     prefs.setString(localStorage['LOCATIONINFO'], addressMap.toString());
 
     String userInfo = prefs.getString(localStorage['USER_INFO']);
@@ -57,18 +59,21 @@ class _HomeState extends State<Home> {
 
   Future getProfileScreenInfo() async {
     String userInfo = prefs.getString(localStorage['USER_INFO']);
-    var result = {
-      "userInfo": jsonDecode(userInfo)
-    };
-    return result;
+    if(userInfo != null) {
+      var result = {
+        "userInfo": jsonDecode(userInfo)
+      };
+      return result;
+    }else {
+      return false;
+    }
+
   }
 
   Future _getProfileImage(context, uid) async {
     var downloadUrl = await _storageServices.getProfilePicDownloadUrl(uid);
+    // var downloadUrl =  prefs.getString(localStorage['USER_PROFILE_PIC_URL']);
     return downloadUrl.toString();
-//    return Image.network(
-//      downloadUrl.toString(),
-//    );
   }
 
   @override
@@ -225,6 +230,18 @@ class _HomeState extends State<Home> {
                         color: Colors.black,
                       ),
                       Center(
+                        child: FlatButton(
+                          onPressed: () =>  Navigator.push(context, MaterialPageRoute(builder: (context) => ( chefProfile() )),),
+                          child: Text('Home Chef'), color: Colors.transparent,
+                        ),
+                      ),
+                      Center(
+                        child: FlatButton(
+                          onPressed: () =>  Navigator.push(context, MaterialPageRoute(builder: (context) => ( createPost() )),),
+                          child: Text('create post'), color: Colors.transparent,
+                        ),
+                      ),
+                      Center(
                         child: FlatButton(onPressed: () => auth.signOut(), child: Text('Sign Out'), color: Colors.transparent,),
                       ),
                     ],
@@ -258,14 +275,6 @@ class _HomeState extends State<Home> {
               padding: EdgeInsets.only(top: 20.0, left: 10.0, right: 10.0),
               child: _widgetOptions.elementAt(_selectedIndex),
             )),
-
-        ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            // Add your onPressed code here!
-          },
-          child: Icon(Icons.add),
-          backgroundColor: Colors.red,
         ),
         bottomNavigationBar: BottomNavigationBar(
           backgroundColor: Colors.white,

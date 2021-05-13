@@ -38,6 +38,7 @@ class _RegisterState extends State<Register> {
 
   File profilePicFile;
   String profilePicPath = defaultProfileImage;
+  bool isUploadImg = false;
   FocusNode focusProfileNameNode;
 
 
@@ -66,7 +67,7 @@ class _RegisterState extends State<Register> {
     onImageUpload(File newFilePath) {
       setState(() {
         profilePicFile = newFilePath;
-        profilePicPath = newFilePath.path;
+        isUploadImg = true;
       });
     }
 
@@ -173,7 +174,7 @@ class _RegisterState extends State<Register> {
       });
     }
 
-    void _showDatePicker() {
+    void _showDatePicker(inputVal) {
       showModalBottomSheet(context: context, builder: (context) {
         DateTime selectedDOB;
         return Container(
@@ -186,19 +187,19 @@ class _RegisterState extends State<Register> {
                   height: 200,
                   child: CupertinoDatePicker(
                     mode: CupertinoDatePickerMode.date,
-                    initialDateTime: DateTime(1993, 1, 1),
-                    onDateTimeChanged: (DateTime newDateTime) => selectedDOB = newDateTime,
+                    initialDateTime: DateFormat('MMMM dd yyyy').parse(inputVal.text),
+                    onDateTimeChanged: (DateTime newDateTime){
+                      selectedDOB = newDateTime;
+                      },
                   ),
                 ),
                 Padding(
                   padding: const EdgeInsets.only(top: 20.0),
                   child: FlatButton(
-                      color: Colors.transparent,
+                      color: Colors.redAccent,
                       onPressed: (){
-
-                        this.dob = (selectedDOB != null) ? DateFormat('yyyyMMdd').format(selectedDOB) : DateFormat('yyyyMMdd').format(new DateTime(1993, 1, 1));
-                        print(this.dob);
-                        _dobController.value = (selectedDOB != null) ? TextEditingValue(text: DateFormat('MMMM dd yyyy').format(selectedDOB)): DateFormat('MMMM dd yyyy').format(new DateTime(1993, 1, 1));
+                        this.dob = (selectedDOB != null) ? DateFormat('yyyyMMdd').format(selectedDOB) : DateFormat('yyyyMMdd').format(DateFormat('MMMM dd yyyy').parse(inputVal.text));
+                        _dobController.value = (selectedDOB != null) ? TextEditingValue(text: DateFormat('MMMM dd yyyy').format(selectedDOB)): TextEditingValue(text: DateFormat('MMMM dd yyyy').format(DateFormat('MMMM dd yyyy').parse(inputVal.text)));
                         Navigator.pop(context);
                       },
                       child: Text(
@@ -259,8 +260,8 @@ class _RegisterState extends State<Register> {
                           radius: 85,
                           backgroundColor: Colors.black,
                           child: CircleAvatar(
-                            radius: 30.0,
-                            backgroundImage: AssetImage(profilePicPath),
+                            radius: 80.0,
+                            backgroundImage: isUploadImg ? FileImage(profilePicFile) : AssetImage(profilePicPath),
                           ),
                         )
                       ),
@@ -326,7 +327,7 @@ class _RegisterState extends State<Register> {
                                 readOnly: true,
                                 style: TextStyle(fontSize: 20.0),
                                 decoration: FormInputDecoration.copyWith(hintText: "DOB*"),
-                                onTap: () => _showDatePicker(),
+                                onTap: () => _showDatePicker(_dobController.value),
                               ),
                             ),
                             flex: 1,
@@ -525,6 +526,7 @@ class _ImageCaptureState extends State<ImageCapture> {
   final picker = ImagePicker();
   final StorageServices _storageServices = StorageServices();
   final UtilityServices _utility = UtilityServices();
+  final UserServices _userService = UserServices();
 
   ImageUploadStatus _status = ImageUploadStatus.Initialised;
 
@@ -577,15 +579,30 @@ class _ImageCaptureState extends State<ImageCapture> {
     }
   }
 
+  updateUseronDPUpdate(uid, timer) {
+    var userInfo = {'isDP' : true};
+    _userService.userCollection.document(uid).get().then((dataSnapshot){
+      var userData = dataSnapshot.data;
+      userData['isDp'] = true;
+      dataSnapshot.reference.updateData(userData).then((onValue){
+        _utility.popRoute(context);
+        timer.cancel();
+        backToPrevPage();
+      }).catchError((onError) {
+        Toaster().showToast(onError.toString());
+      });
+    }).catchError((onError) {
+      Toaster().showToast(onError.toString());
+    });
+  }
+
   _uploadProfileImg(uid, _imageFile, context) {
     _utility.showLoader(context);
     StorageUploadTask task = _storageServices.startProfilePicUpload(uid, _imageFile);
 
     new Timer.periodic(new Duration(seconds: 1), (timer) {
       if(task.isSuccessful){
-        _utility.popRoute(context);
-        timer.cancel();
-        backToPrevPage();
+        updateUseronDPUpdate(uid, timer);
       }
       if(task.isCanceled){
         _utility.popRoute(context);
