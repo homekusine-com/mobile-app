@@ -1,13 +1,16 @@
 import 'dart:convert';
-import 'package:firebase_storage/firebase_storage.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:homekusine/screens/chef/chefProfile.dart';
 import 'package:homekusine/screens/post/createPost.dart';
+import 'package:homekusine/services/fireStoreDB.services.dart';
 import 'package:homekusine/services/storage.services.dart';
 import 'package:homekusine/services/user.services.dart';
 import 'package:homekusine/providers/auth.provider.dart';
+import 'package:homekusine/shared/widgets/postList/postTile.dart';
 import 'package:provider/provider.dart';
-import 'package:geocoder/geocoder.dart';
+import 'package:geocoder/geocoder.dart' as Gc;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:homekusine/constance/constance.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -29,6 +32,7 @@ class _HomeState extends State<Home> {
 
   final UserServices _userServices = UserServices();
   SharedPreferences prefs;
+  final FireStoreDBServices _fireStoreDbServices = FireStoreDBServices();
 
 
   void _onItemTapped(int index) {
@@ -43,21 +47,25 @@ class _HomeState extends State<Home> {
     var locationObj = location.split(',').map((String point) => point.split(": ")[1]);
     var lat = double.parse(locationObj.first);
     var lon = double.parse(locationObj.last);
-    final coordinates = new Coordinates(lat, lon);
-    var addresses = await Geocoder.local.findAddressesFromCoordinates(coordinates);
+    final coordinates = new Gc.Coordinates(lat, lon);
+    var addresses = await Gc.Geocoder.local.findAddressesFromCoordinates(coordinates);
     var addressMap = addresses.first.toMap();
 
     prefs.setString(localStorage['LOCATIONINFO'], addressMap.toString());
 
     String userInfo = prefs.getString(localStorage['USER_INFO']);
+    print(addressMap.toString());
     var result = {
-      "currectLocation": addressMap['subLocality'],
-      "userInfo": userInfo
+      "currectLocation": (addressMap['subLocality'] != null) ? addressMap['subLocality'] :  (addressMap['thoroughfare'] != null) ? "${addressMap['thoroughfare']}" : addressMap['postalCode'],
+      "userInfo": userInfo,
+      "lat": lat,
+      "lon": lon
     };
     return result;
   }
 
   Future getProfileScreenInfo() async {
+    prefs = await SharedPreferences.getInstance();
     String userInfo = prefs.getString(localStorage['USER_INFO']);
     if(userInfo != null) {
       var result = {
@@ -72,7 +80,6 @@ class _HomeState extends State<Home> {
 
   Future _getProfileImage(context, uid) async {
     var downloadUrl = await _storageServices.getProfilePicDownloadUrl(uid);
-    // var downloadUrl =  prefs.getString(localStorage['USER_PROFILE_PIC_URL']);
     return downloadUrl.toString();
   }
 
@@ -87,7 +94,8 @@ class _HomeState extends State<Home> {
               FutureBuilder(
                 future: getScreenInfo(),
                 builder: (context, snapshot) {
-                  if(snapshot.data != null){
+                  if(snapshot.hasData){
+                    var userInfo = jsonDecode(snapshot.data['userInfo']);
                     return Column(
                       children: <Widget>[
                         Row(
@@ -138,12 +146,59 @@ class _HomeState extends State<Home> {
                                     shape: StadiumBorder(side: BorderSide()),
                                     label: Text('Sort by less price'),
                                   ),
-
                                 ]
                             ),
                           )
                         ),
-
+                        Container(
+                          height: MediaQuery.of(context).size.height * 0.69,
+                          child: StreamBuilder(
+                                  stream: _fireStoreDbServices.getPost(snapshot.data['lat'], snapshot.data['lon']),
+                                  builder:
+                                  (BuildContext context, AsyncSnapshot<List<DocumentSnapshot>> snapshot) {
+                                    if(snapshot.hasData) {
+                                      if (snapshot.data.length > 0) {
+                                        return Container(
+                                          color: Colors.white,
+                                          child: ListView.builder(
+                                              shrinkWrap: true,
+                                              itemCount: snapshot.data.length,
+                                              // itemExtent: 150.0,
+                                              itemBuilder: (BuildContext context, int index) {
+                                                // return Text(userInfo['profileName']);
+                                                return PostTile(post: snapshot.data[index], user: userInfo);
+                                              }
+                                          )
+                                        );
+                                      }else {
+                                        return Padding(
+                                          padding: EdgeInsets.fromLTRB(0, 10.0, 0, 10.0),
+                                          child: Text('no post found at the moment in your locality'),
+                                        );
+                                      }
+                                    }else {
+                                      return SingleChildScrollView(
+                                        child: Column(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            children: <Widget>[
+                                              Container(
+                                                height: MediaQuery.of(context).size.height - 100,
+                                                width: MediaQuery.of(context).size.width,
+                                                color: Colors.white,
+                                                child: Center(
+                                                  child: SpinKitDualRing(
+                                                    color: Colors.redAccent,
+                                                    size: 50.0,
+                                                  ),
+                                                ),
+                                              )
+                                            ]
+                                        ),
+                                      );
+                                    }
+                                  }
+                          )
+                        )
                       ],
                     );
                   }else{

@@ -49,7 +49,6 @@ class AuthProvider with ChangeNotifier {
 
   Future<void> readPrefs() async {
       prefs = await SharedPreferences.getInstance();
-      GeolocationStatus geolocationStatus  = await Geolocator().checkGeolocationPermissionStatus();
       Position position = await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
 
       if(position != null){

@@ -6,6 +6,11 @@ class UtilityServices {
 
   SharedPreferences prefs;
 
+  var currencySymbol = {
+    'India': '\u20B9',
+    'United Kingdom of Great Britain and Northern Ireland': '0x00A3'
+  };
+
   showLoader(context) {
     Navigator.of(context).push(
       PageRouteBuilder(
@@ -24,6 +29,10 @@ class UtilityServices {
     var addrObj = {
 
     };
+  }
+
+  getCurrencySymbol(name) {
+    return currencySymbol[name];
   }
 
 }

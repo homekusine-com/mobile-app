@@ -16,11 +16,22 @@ class StorageServices {
     return _storage.ref().child(filePath).putFile(file);
   }
 
+  startPostPicUpload(String pid, File file) {
+    String filePath = '${storagePaths['postImage']}/$pid.png';
+    return _storage.ref().child(filePath).putFile(file);
+  }
+
   getProfilePicDownloadUrl(uid) async{
     String filePath = '${storagePaths['profilePic']}/$uid.png';
     var ref = _storage.ref().child(filePath);
     var url = await ref.getDownloadURL();
     return url;
+  }
+
+  Future getPostPicDownloadUrl(filePath) async{
+    var ref = _storage.ref().child(filePath);
+    var downloadUrl = await ref.getDownloadURL();
+    return downloadUrl;
   }
 
 }

@@ -9,4 +9,12 @@ class Toaster {
         backgroundColor: Colors.red,
         textColor: Colors.white);
   }
+
+  showSuccessToast(mes) {
+    Fluttertoast.showToast(
+        msg: mes,
+        toastLength: Toast.LENGTH_SHORT,
+        backgroundColor: Colors.lightGreen,
+        textColor: Colors.white);
+  }
 }

@@ -69,10 +69,11 @@ const dropDownInputDecoration = InputDecoration(
 );
 
 const defaultProfileImage = "assets/defaultProfilePic.png";
-const defaultPostImage = "assets/plateFood.jpg";
+const defaultPostImage = "assets/defaultPost.png";
 
 const storagePaths = {
   "profilePic": "ProfilePicture",
+  "postImage": "PostImages",
   "post": "Post"
 };
 
