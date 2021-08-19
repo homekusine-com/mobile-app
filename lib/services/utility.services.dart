@@ -7,8 +7,8 @@ class UtilityServices {
   SharedPreferences prefs;
 
   var currencySymbol = {
-    'India': '\u20B9',
-    'United Kingdom of Great Britain and Northern Ireland': '0x00A3'
+    'India': {'value': '\u20B9', 'type': 'string'},
+    'United Kingdom of Great Britain and Northern Ireland': {'value': 0x00A3, 'type': 'icon'}
   };
 
   showLoader(context) {

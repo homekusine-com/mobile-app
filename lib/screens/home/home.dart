@@ -54,7 +54,6 @@ class _HomeState extends State<Home> {
     prefs.setString(localStorage['LOCATIONINFO'], addressMap.toString());
 
     String userInfo = prefs.getString(localStorage['USER_INFO']);
-    print(addressMap.toString());
     var result = {
       "currectLocation": (addressMap['subLocality'] != null) ? addressMap['subLocality'] :  (addressMap['thoroughfare'] != null) ? "${addressMap['thoroughfare']}" : addressMap['postalCode'],
       "userInfo": userInfo,
